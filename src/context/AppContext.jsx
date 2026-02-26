@@ -124,7 +124,7 @@ export function AppProvider({ children }) {
       try {
         const parsed = JSON.parse(saved)
         dispatch({ type: 'LOAD', payload: parsed })
-      } catch {}
+      } catch { /* ignore corrupted localStorage */ }
     } else {
       // Load sample data on first run
       const tasks = buildSampleTasks(sampleData.projects)
@@ -134,7 +134,7 @@ export function AppProvider({ children }) {
 
   // Save to localStorage whenever state changes
   useEffect(() => {
-    const { activeView, selectedProjectId, ...toSave } = state
+    const { activeView: _activeView, selectedProjectId: _selectedProjectId, ...toSave } = state
     localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave))
   }, [state])
 
@@ -154,6 +154,7 @@ export function AppProvider({ children }) {
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useApp() {
   return useContext(AppContext)
 }

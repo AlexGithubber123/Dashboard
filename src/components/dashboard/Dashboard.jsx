@@ -23,7 +23,6 @@ export default function Dashboard() {
 
   const now = new Date()
   const activeProjects = projects.filter(p => p.status === 'active')
-  const completedProjects = projects.filter(p => p.status === 'completed')
   const overdueProjects = projects.filter(p => p.dueDate && new Date(p.dueDate) < now && p.status !== 'completed')
   const totalTasks = tasks.length
   const completedTasks = tasks.filter(t => t.completed).length
@@ -98,7 +97,7 @@ export default function Dashboard() {
                   onClick={() => dispatch({ type: 'SET_VIEW', view: 'project-detail', projectId: project.id })}
                   className="w-full flex items-center gap-4 px-5 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors text-left"
                 >
-                  <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: project.color || '#3b82f6' }} />
+                  <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: project.color || '#3b82f6' }} />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-slate-800 dark:text-slate-100 truncate">{project.name}</p>
                     {projectTasks.length > 0 && (
@@ -133,7 +132,7 @@ export default function Dashboard() {
                 onClick={() => dispatch({ type: 'SET_VIEW', view: 'project-detail', projectId: project.id })}
                 className="w-full flex items-center gap-4 px-5 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors text-left"
               >
-                <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: project.color || '#3b82f6' }} />
+                <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: project.color || '#3b82f6' }} />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-slate-800 dark:text-slate-100 truncate">{project.name}</p>
                   <p className="text-xs text-slate-400 mt-0.5">{project.category}</p>

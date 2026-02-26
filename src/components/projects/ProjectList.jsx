@@ -5,7 +5,7 @@ import { StatusBadge, PriorityBadge } from '../ui/Badge'
 import ProjectModal from './ProjectModal'
 
 export default function ProjectList() {
-  const { state, dispatch } = useApp()
+  const { state } = useApp()
   const { projects, tasks } = state
   const [showModal, setShowModal] = useState(false)
   const [search, setSearch] = useState('')
@@ -185,7 +185,7 @@ function ProjectRow({ project, progress }) {
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 px-5 py-4 flex items-center gap-4">
-      <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: project.color || '#3b82f6' }} />
+      <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: project.color || '#3b82f6' }} />
       <div className="flex-1 min-w-0">
         <p className="font-medium text-slate-800 dark:text-slate-100 truncate">{project.name}</p>
         {project.category && <p className="text-xs text-slate-400">{project.category}</p>}
@@ -201,7 +201,7 @@ function ProjectRow({ project, progress }) {
         </div>
       ) : <div className="w-24 hidden sm:block" />}
       {project.dueDate && (
-        <span className={`text-xs hidden md:block flex-shrink-0 ${overdue ? 'text-red-500 font-semibold' : 'text-slate-400'}`}>
+        <span className={`text-xs hidden md:block shrink-0 ${overdue ? 'text-red-500 font-semibold' : 'text-slate-400'}`}>
           {new Date(project.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
         </span>
       )}

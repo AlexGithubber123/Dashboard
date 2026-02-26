@@ -19,7 +19,7 @@ export default function TaskItem({ task }) {
     }`}>
       <button
         onClick={() => dispatch({ type: 'TOGGLE_TASK', id: task.id })}
-        className={`w-5 h-5 flex-shrink-0 rounded-full border-2 flex items-center justify-center transition-all ${
+        className={`w-5 h-5 shrink-0 rounded-full border-2 flex items-center justify-center transition-all ${
           task.completed
             ? 'bg-emerald-500 border-emerald-500'
             : 'border-slate-300 dark:border-slate-600 hover:border-blue-400'
@@ -32,7 +32,7 @@ export default function TaskItem({ task }) {
         {task.title}
       </span>
 
-      <div className="flex items-center gap-2 flex-shrink-0">
+      <div className="flex items-center gap-2 shrink-0">
         {task.dueDate && (
           <span className={`flex items-center gap-1 text-xs ${overdue ? 'text-red-500 font-semibold' : 'text-slate-400 dark:text-slate-500'}`}>
             <Calendar size={11} />
