@@ -1,6 +1,8 @@
+import { useState } from 'react'
 import { useApp } from '../../context/AppContext'
-import { CheckSquare, FolderKanban, TrendingUp, AlertCircle, Clock } from 'lucide-react'
+import { CheckSquare, FolderKanban, TrendingUp, AlertCircle, Clock, Plus } from 'lucide-react'
 import { StatusBadge, PriorityBadge } from '../ui/Badge'
+import ProjectModal from '../projects/ProjectModal'
 
 function StatCard({ label, value, icon: Icon, color, sub }) {
   return (
@@ -20,6 +22,7 @@ function StatCard({ label, value, icon: Icon, color, sub }) {
 export default function Dashboard() {
   const { state, dispatch } = useApp()
   const { projects, tasks } = state
+  const [showNewProject, setShowNewProject] = useState(false)
 
   const now = new Date()
   const activeProjects = projects.filter(p => p.status === 'active')
@@ -52,9 +55,18 @@ export default function Dashboard() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-800 dark:text-white">Dashboard</h1>
-        <p className="text-slate-500 dark:text-slate-400 mt-1">Here's what's happening with your projects.</p>
+      <div className="flex items-start justify-between mb-8">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-800 dark:text-white">Dashboard</h1>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Here's what's happening with your projects.</p>
+        </div>
+        <button
+          onClick={() => setShowNewProject(true)}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors shrink-0"
+        >
+          <Plus size={16} />
+          New Project
+        </button>
       </div>
 
       {/* Recent Projects — above the tiles */}
@@ -154,6 +166,7 @@ export default function Dashboard() {
           ))}
         </div>
       </div>
+      {showNewProject && <ProjectModal onClose={() => setShowNewProject(false)} />}
     </div>
   )
 }
