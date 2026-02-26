@@ -84,6 +84,15 @@ function reducer(state, action) {
       const project = { id: uuidv4(), ...action.payload, createdAt: new Date().toISOString() }
       return { ...state, projects: [project, ...state.projects] }
     }
+    case 'DUPLICATE_PROJECT': {
+      const newId = uuidv4()
+      const { id, createdAt: _createdAt, ...rest } = action.project
+      const newProject = { ...rest, id: newId, name: `Copy of ${action.project.name}`, createdAt: new Date().toISOString() }
+      const copiedTasks = state.tasks
+        .filter(t => t.projectId === id)
+        .map(t => ({ ...t, id: uuidv4(), projectId: newId, completed: false, createdAt: new Date().toISOString() }))
+      return { ...state, projects: [newProject, ...state.projects], tasks: [...state.tasks, ...copiedTasks] }
+    }
     case 'UPDATE_PROJECT':
       return { ...state, projects: state.projects.map(p => p.id === action.payload.id ? { ...p, ...action.payload } : p) }
 

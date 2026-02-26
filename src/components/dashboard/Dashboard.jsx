@@ -121,22 +121,8 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* Stat Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatCard label="Total Projects" value={projects.length} icon={FolderKanban} color="bg-blue-500" />
-        <StatCard label="Active Projects" value={activeProjects.length} icon={TrendingUp} color="bg-violet-500" />
-        <StatCard
-          label="Tasks Complete"
-          value={`${completedTasks}/${totalTasks}`}
-          icon={CheckSquare}
-          color="bg-emerald-500"
-          sub={totalTasks > 0 ? `${Math.round((completedTasks / totalTasks) * 100)}% done` : null}
-        />
-        <StatCard label="Overdue" value={overdueProjects.length} icon={AlertCircle} color={overdueProjects.length > 0 ? 'bg-red-500' : 'bg-slate-400'} />
-      </div>
-
       {/* Upcoming Deadlines */}
-      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 mb-8">
         <div className="flex items-center gap-2 px-5 py-4 border-b border-slate-100 dark:border-slate-700">
           <Clock size={18} className="text-slate-400" />
           <h2 className="font-semibold text-slate-800 dark:text-white">Upcoming Deadlines</h2>
@@ -165,6 +151,20 @@ export default function Dashboard() {
             </button>
           ))}
         </div>
+      </div>
+
+      {/* Stat Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <StatCard label="Total Projects" value={projects.length} icon={FolderKanban} color="bg-blue-500" />
+        <StatCard label="Active Projects" value={activeProjects.length} icon={TrendingUp} color="bg-violet-500" />
+        <StatCard
+          label="Tasks Complete"
+          value={`${completedTasks}/${totalTasks}`}
+          icon={CheckSquare}
+          color="bg-emerald-500"
+          sub={totalTasks > 0 ? `${Math.round((completedTasks / totalTasks) * 100)}% done` : null}
+        />
+        <StatCard label="Overdue" value={overdueProjects.length} icon={AlertCircle} color={overdueProjects.length > 0 ? 'bg-red-500' : 'bg-slate-400'} />
       </div>
       {showNewProject && <ProjectModal onClose={() => setShowNewProject(false)} />}
     </div>
