@@ -34,7 +34,7 @@ export default function Dashboard() {
 
   const recentProjects = [...projects]
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    .slice(0, 5)
+    .slice(0, 3)
 
   function daysUntil(dateStr) {
     const diff = Math.ceil((new Date(dateStr) - now) / (1000 * 60 * 60 * 24))
@@ -57,6 +57,58 @@ export default function Dashboard() {
         <p className="text-slate-500 dark:text-slate-400 mt-1">Here's what's happening with your projects.</p>
       </div>
 
+      {/* Recent Projects — above the tiles */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-semibold text-slate-700 dark:text-slate-200">Recent Projects</h2>
+          <button
+            onClick={() => dispatch({ type: 'SET_VIEW', view: 'projects' })}
+            className="text-sm text-blue-500 hover:text-blue-600 font-medium"
+          >
+            View all
+          </button>
+        </div>
+        {recentProjects.length === 0 ? (
+          <p className="text-slate-400 text-sm">No projects yet.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {recentProjects.map(project => {
+              const projectTasks = tasks.filter(t => t.projectId === project.id)
+              const done = projectTasks.filter(t => t.completed).length
+              const pct = projectTasks.length > 0 ? Math.round((done / projectTasks.length) * 100) : 0
+              const pending = projectTasks.filter(t => !t.completed).length
+              return (
+                <button
+                  key={project.id}
+                  onClick={() => dispatch({ type: 'SET_VIEW', view: 'project-detail', projectId: project.id })}
+                  className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden hover:shadow-md hover:border-slate-200 dark:hover:border-slate-600 transition-all text-left"
+                >
+                  <div className="h-1.5" style={{ backgroundColor: project.color || '#3b82f6' }} />
+                  <div className="p-4">
+                    <div className="flex items-start justify-between gap-2 mb-3">
+                      <p className="font-semibold text-slate-800 dark:text-slate-100 text-sm leading-snug truncate">{project.name}</p>
+                      <StatusBadge status={project.status} />
+                    </div>
+                    {projectTasks.length > 0 ? (
+                      <>
+                        <div className="h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full mb-2">
+                          <div className="h-1.5 rounded-full transition-all" style={{ width: `${pct}%`, backgroundColor: project.color || '#3b82f6' }} />
+                        </div>
+                        <p className="text-xs text-slate-400 dark:text-slate-500">
+                          {pending > 0 ? `${pending} task${pending > 1 ? 's' : ''} remaining` : 'All tasks done'}
+                        </p>
+                      </>
+                    ) : (
+                      <p className="text-xs text-slate-400 dark:text-slate-500">No tasks yet</p>
+                    )}
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+        )}
+      </div>
+
       {/* Stat Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <StatCard label="Total Projects" value={projects.length} icon={FolderKanban} color="bg-blue-500" />
@@ -71,81 +123,35 @@ export default function Dashboard() {
         <StatCard label="Overdue" value={overdueProjects.length} icon={AlertCircle} color={overdueProjects.length > 0 ? 'bg-red-500' : 'bg-slate-400'} />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Projects */}
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
-          <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-700">
-            <h2 className="font-semibold text-slate-800 dark:text-white">Recent Projects</h2>
-            <button
-              onClick={() => dispatch({ type: 'SET_VIEW', view: 'projects' })}
-              className="text-sm text-blue-500 hover:text-blue-600 font-medium"
-            >
-              View all
-            </button>
-          </div>
-          <div className="divide-y divide-slate-50 dark:divide-slate-700/50">
-            {recentProjects.length === 0 && (
-              <p className="px-5 py-6 text-slate-400 text-sm text-center">No projects yet.</p>
-            )}
-            {recentProjects.map(project => {
-              const projectTasks = tasks.filter(t => t.projectId === project.id)
-              const done = projectTasks.filter(t => t.completed).length
-              const pct = projectTasks.length > 0 ? Math.round((done / projectTasks.length) * 100) : 0
-              return (
-                <button
-                  key={project.id}
-                  onClick={() => dispatch({ type: 'SET_VIEW', view: 'project-detail', projectId: project.id })}
-                  className="w-full flex items-center gap-4 px-5 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors text-left"
-                >
-                  <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: project.color || '#3b82f6' }} />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-slate-800 dark:text-slate-100 truncate">{project.name}</p>
-                    {projectTasks.length > 0 && (
-                      <div className="flex items-center gap-2 mt-1">
-                        <div className="flex-1 h-1 bg-slate-100 dark:bg-slate-700 rounded-full max-w-24">
-                          <div className="h-1 rounded-full bg-blue-500" style={{ width: `${pct}%` }} />
-                        </div>
-                        <span className="text-xs text-slate-400">{pct}%</span>
-                      </div>
-                    )}
-                  </div>
-                  <StatusBadge status={project.status} />
-                </button>
-              )
-            })}
-          </div>
+      {/* Upcoming Deadlines */}
+      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
+        <div className="flex items-center gap-2 px-5 py-4 border-b border-slate-100 dark:border-slate-700">
+          <Clock size={18} className="text-slate-400" />
+          <h2 className="font-semibold text-slate-800 dark:text-white">Upcoming Deadlines</h2>
         </div>
-
-        {/* Upcoming Deadlines */}
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
-          <div className="flex items-center gap-2 px-5 py-4 border-b border-slate-100 dark:border-slate-700">
-            <Clock size={18} className="text-slate-400" />
-            <h2 className="font-semibold text-slate-800 dark:text-white">Upcoming Deadlines</h2>
-          </div>
-          <div className="divide-y divide-slate-50 dark:divide-slate-700/50">
-            {upcoming.length === 0 && (
-              <p className="px-5 py-6 text-slate-400 text-sm text-center">No upcoming deadlines.</p>
-            )}
-            {upcoming.map(project => (
-              <button
-                key={project.id}
-                onClick={() => dispatch({ type: 'SET_VIEW', view: 'project-detail', projectId: project.id })}
-                className="w-full flex items-center gap-4 px-5 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors text-left"
-              >
-                <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: project.color || '#3b82f6' }} />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-slate-800 dark:text-slate-100 truncate">{project.name}</p>
-                  <p className="text-xs text-slate-400 mt-0.5">{project.category}</p>
-                </div>
-                <div className="flex flex-col items-end gap-1">
-                  <span className={`text-xs font-semibold ${daysUntilColor(project.dueDate)}`}>
-                    {daysUntil(project.dueDate)}
-                  </span>
-                  <PriorityBadge priority={project.priority} />
-                </div>
-              </button>
-            ))}
-          </div>
+        <div className="divide-y divide-slate-50 dark:divide-slate-700/50">
+          {upcoming.length === 0 && (
+            <p className="px-5 py-6 text-slate-400 text-sm text-center">No upcoming deadlines.</p>
+          )}
+          {upcoming.map(project => (
+            <button
+              key={project.id}
+              onClick={() => dispatch({ type: 'SET_VIEW', view: 'project-detail', projectId: project.id })}
+              className="w-full flex items-center gap-4 px-5 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors text-left"
+            >
+              <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: project.color || '#3b82f6' }} />
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-slate-800 dark:text-slate-100 truncate">{project.name}</p>
+                <p className="text-xs text-slate-400 mt-0.5">{project.category}</p>
+              </div>
+              <div className="flex flex-col items-end gap-1">
+                <span className={`text-xs font-semibold ${daysUntilColor(project.dueDate)}`}>
+                  {daysUntil(project.dueDate)}
+                </span>
+                <PriorityBadge priority={project.priority} />
+              </div>
+            </button>
+          ))}
         </div>
       </div>
     </div>
